@@ -14,11 +14,11 @@ class IsOwner(BasePermission):
 
 
 
-class IsSelfOrReadOnly(BasePermission):
+class IsOwnerOrReadOnly(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated
+        return True
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
-        return obj == request.user
+        return request.user == obj

@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+
 from rest_framework.response import Response
 from app_main.models import Note
+
 from .serializers import NoteSerializer, UserSerializer
-from .permissions import IsSelfOrReadOnly, IsOwner
+from .permissions import  IsOwner, IsOwnerOrReadOnly
 
 User = get_user_model()
 
@@ -21,15 +24,4 @@ class NoteViewSet(ModelViewSet):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsSelfOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-    def perform_update(self, serializer):
-        if self.get_object() == self.request.user:
-            serializer.save()
-
-    def perform_destroy(self, instance):
-        if instance == self.request.user:
-            instance.delete()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
